@@ -46,9 +46,25 @@ Israel only, all regions.
 3. Keep only roles that pass the role filter AND the location filter.
 4. Drop any role whose unique id (company + title + link) already appears in seen-jobs.json.
 5. Rank each surviving role: High / Medium match.
+6. For each surviving role, resolve the link to use in the output:
+   a. Prefer the company's OFFICIAL careers page or its own applicant-tracking system (e.g. a
+      Greenhouse / Lever / Workday posting hosted for or by the company) as the Link.
+   b. Only if no official posting URL can be found or verified, fall back to a third-party job
+      board (e.g. builtin.com, LinkedIn) as the Link — and mark that link "(aggregator)" so it's
+      clear it is not the official source.
 
 # Output format
 Return a Markdown table, newest first, with columns: Company, Role title, Link, Posted date, Match.
+- The Link column is REQUIRED on every row and MUST be the direct URL to that specific job
+  posting (the exact page listing that role) — never the company's generic careers landing page.
+- Link priority: use the company's OFFICIAL careers page / own ATS posting (Greenhouse, Lever,
+  Workday, etc.) whenever possible. Only if no official posting URL can be found or verified,
+  use a third-party job board (e.g. builtin.com, LinkedIn) instead, and append " (aggregator)"
+  after that link so it's clear it's not the official source.
+- If a specific posting URL — official or aggregator — cannot be found or verified as still live,
+  do not include the role in the table; note it separately (e.g. "found via search but could not
+  verify a direct link for <role> at <company>") rather than linking to a generic careers page or
+  guessing a URL.
 - If there are no new relevant roles, say: "No new relevant roles today."
 - After presenting, append every newly reported role to seen-jobs.json (Write) so it is not
   repeated next run.
